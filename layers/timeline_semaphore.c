@@ -1686,6 +1686,16 @@ device_submit_deferred_locked(struct device_data *device)
     return result;
 }
 
+static void timeline_GetDeviceQueue(
+    VkDevice                                    _device, 
+    uint32_t                                    queueFamilyIndex, 
+    uint32_t                                    queueIndex, 
+    VkQueue*                                    pQueue)
+{
+    struct device_data *device = object_find(&global_map, _device);
+    *pQueue = device->queues[queueIndex].queue;
+}
+
 static VkResult timeline_QueueSubmit(
     VkQueue                                     _queue,
     uint32_t                                    submitCount,
@@ -2486,6 +2496,7 @@ static const NAME_TO_FUNCPTR name_to_device_funcptr_map[] = {
     ADD_HOOK_ALIAS(WaitSemaphoresKHR, WaitSemaphores),
     ADD_HOOK_ALIAS(SignalSemaphoreKHR, SignalSemaphore),
 
+    ADD_HOOK(GetDeviceQueue),
     ADD_HOOK(QueueSubmit),
     ADD_HOOK(QueueBindSparse),
     ADD_HOOK(QueueWaitIdle),
